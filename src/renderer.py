@@ -1,9 +1,8 @@
-import torch,os,imageio,sys
+import os,imageio,sys
 from tqdm.auto import tqdm
-from dataLoader.ray_utils import get_rays
-from models.tensoRF import TensorVM, TensorCP, raw2alpha, TensorVMSplit, AlphaGridMask
+from src.dataLoader.ray_utils import get_rays
 from utils import *
-from dataLoader.ray_utils import ndc_rays_blender
+from src.dataLoader.ray_utils import ndc_rays_blender
 
 
 def OctreeRender_trilinear_fast(rays, tensorf, chunk=4096, N_samples=-1, ndc_ray=False, white_bg=True, is_train=False, device='cuda'):

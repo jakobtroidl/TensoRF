@@ -1,0 +1,19 @@
+# File: example.obj
+
+# First object
+o Object1
+v 1.0 1.0 1.0
+v -1.0 1.0 1.0
+v 1.0 -1.0 1.0
+v -1.0 -1.0 1.0
+f 1 2 3
+f 2 3 4
+
+# Second object
+o Object2
+v 2.0 2.0 2.0
+v -2.0 2.0 2.0
+v 2.0 -2.0 2.0
+v -2.0 -2.0 2.0
+f 5 6 7
+f 6 7 8
