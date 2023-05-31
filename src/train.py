@@ -5,7 +5,7 @@ from utils import *
 from torch.utils.tensorboard import SummaryWriter
 import datetime
 
-from src.dataLoader import dataset_dict
+from dataLoader import dataset_dict
 import sys
 
 

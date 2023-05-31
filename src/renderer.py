@@ -1,8 +1,8 @@
 import os,imageio,sys
 from tqdm.auto import tqdm
-from src.dataLoader.ray_utils import get_rays
+from dataLoader.ray_utils import get_rays
 from utils import *
-from src.dataLoader.ray_utils import ndc_rays_blender
+from dataLoader.ray_utils import ndc_rays_blender
 
 
 def OctreeRender_trilinear_fast(rays, tensorf, chunk=4096, N_samples=-1, ndc_ray=False, white_bg=True, is_train=False, device='cuda'):

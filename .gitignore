@@ -2,7 +2,10 @@
 .idea/
 
 data/sdf_samples/
+data/nerf_synthetic/
 
 src/__pycache__/
 
 *.pyc
+
+*.0
