@@ -1,5 +1,11 @@
+
+import os
+from tqdm.auto import tqdm
 from opt import config_parser
 
+
+
+import json, random
 from renderer import *
 from utils import *
 from torch.utils.tensorboard import SummaryWriter
@@ -7,6 +13,8 @@ import datetime
 
 from dataLoader import dataset_dict
 import sys
+
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -124,9 +132,6 @@ def reconstruction(args):
         tensorf = eval(args.model_name)(**kwargs)
         tensorf.load(ckpt)
     else:
-
-        print(args.model_name)
-
         tensorf = eval(args.model_name)(aabb, reso_cur, device,
                     density_n_comp=n_lamb_sigma, appearance_n_comp=n_lamb_sh, app_dim=args.data_dim_color, near_far=near_far,
                     shadingMode=args.shadingMode, alphaMask_thres=args.alpha_mask_thre, density_shift=args.density_shift, distance_scale=args.distance_scale,

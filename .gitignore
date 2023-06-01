@@ -5,6 +5,8 @@ data/sdf_samples/
 data/nerf_synthetic/
 
 src/__pycache__/
+log/
+
 
 *.pyc
 

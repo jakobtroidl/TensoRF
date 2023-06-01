@@ -1,4 +1,5 @@
 from .tensorBase import *
+import time
 
 
 class TensorVM(TensorBase):
@@ -332,19 +333,23 @@ class TensorCP(TensorBase):
         return grad_vars
 
     def compute_densityfeature(self, xyz_sampled):
+        # get length of xyz_smapled along first dimension
+        # print("xyz_sampled", )
 
+
+
+        start_time = time.time()
         coordinate_line = torch.stack((xyz_sampled[..., self.vecMode[0]], xyz_sampled[..., self.vecMode[1]], xyz_sampled[..., self.vecMode[2]]))
         coordinate_line = torch.stack((torch.zeros_like(coordinate_line), coordinate_line), dim=-1).detach().view(3, -1, 1, 2)
 
-
-        line_coef_point = F.grid_sample(self.density_line[0], coordinate_line[[0]],
-                                            align_corners=True).view(-1, *xyz_sampled.shape[:1])
-        line_coef_point = line_coef_point * F.grid_sample(self.density_line[1], coordinate_line[[1]],
-                                        align_corners=True).view(-1, *xyz_sampled.shape[:1])
-        line_coef_point = line_coef_point * F.grid_sample(self.density_line[2], coordinate_line[[2]],
-                                        align_corners=True).view(-1, *xyz_sampled.shape[:1])
+        line_coef_point = F.grid_sample(self.density_line[0], coordinate_line[[0]], align_corners=True).view(-1, *xyz_sampled.shape[:1])
+        line_coef_point = line_coef_point * F.grid_sample(self.density_line[1], coordinate_line[[1]], align_corners=True).view(-1, *xyz_sampled.shape[:1])
+        line_coef_point = line_coef_point * F.grid_sample(self.density_line[2], coordinate_line[[2]], align_corners=True).view(-1, *xyz_sampled.shape[:1])
         sigma_feature = torch.sum(line_coef_point, dim=0)
-        
+
+        duration = time.time() - start_time
+
+        # print("compute ", xyz_sampled.shape[0], " density feature time: ", duration)
         
         return sigma_feature
     
