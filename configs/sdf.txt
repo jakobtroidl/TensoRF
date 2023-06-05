@@ -19,7 +19,7 @@ render_test = 1
 
 n_lamb_sigma = [16,16,16]
 n_lamb_sh = [48,48,48]
-model_name = TensorCP
+model_name = SDFTensorCP
 
 
 shadingMode = SH
@@ -33,7 +33,7 @@ L1_weight_rest = 4e-5
 rm_weight_mask_thre = 1e-4
 
 ## please uncomment following configuration if hope to training on cp model
-model_name = TensorCP
+model_name = SDFTensorCP
 n_lamb_sigma = [96]
 n_lamb_sh = [288]
 N_voxel_final = 125000000 # 500**3
