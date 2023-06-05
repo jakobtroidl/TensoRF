@@ -7,6 +7,26 @@ from dataLoader.ray_utils import ndc_rays_blender
 import time
 
 
+def SDFRenderer(positions, tensorf, chunk=4096, is_train=False, device='cuda'):
+
+    # Debug needed
+
+    # render the sdf values on positions using tensorf
+    # positions: (N,3)
+    # tensorf: a function that takes in a tensor of positions and returns a tensor of sdf values
+    # chunk: the number of positions to render at a time
+    # is_train: whether to use the train mode of tensorf
+    # device: the device to use
+    # returns: a tensor of sdf values
+    sdf_values = []
+    N_positions_all = positions.shape[0]
+    for chunk_idx in range(N_positions_all // chunk + int(N_positions_all % chunk > 0)):
+        positions_chunk = positions[chunk_idx * chunk:(chunk_idx + 1) * chunk].to(device)
+        sdf = tensorf(positions_chunk, is_train=is_train)
+        sdf_values.append(sdf)
+    return torch.cat(sdf_values)
+
+
 def OctreeRender_trilinear_fast(rays, tensorf, chunk=4096, N_samples=-1, ndc_ray=False, white_bg=True, is_train=False, device='cuda'):
 
     rgbs, alphas, depth_maps, weights, uncertainties = [], [], [], [], []
