@@ -11,15 +11,22 @@ from .ray_utils import *
 
 class RegularSDFDataset(Dataset):
     def __init__(self, datadir, res=256, downsample=1.0):
+
         self.root_dir = datadir
         self.res = res
         self.all_pos = None
         self.all_sdf = None
+
+        self.scene_bbox = self.get_aabb(res)
         self.read_meta()
 
     # def read_depth(self, filename):
     #     depth = np.array(read_pfm(filename)[0], dtype=np.float32)  # (800, 800)
     #     return depth
+
+    @staticmethod
+    def get_aabb(res):
+        return torch.tensor([[0, 0, 0], [res, res, res]])
 
     def read_meta(self):
 
