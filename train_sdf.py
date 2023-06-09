@@ -190,11 +190,11 @@ def reconstruction(args):
             loss_tv = tensorf.TV_loss_density(tvreg) * TV_weight_density
             total_loss = total_loss + loss_tv
             summary_writer.add_scalar('train/reg_tv_density', loss_tv.detach().item(), global_step=iteration)
-        if TV_weight_app > 0:
-            TV_weight_app *= lr_factor
-            loss_tv = tensorf.TV_loss_app(tvreg) * TV_weight_app
-            total_loss = total_loss + loss_tv
-            summary_writer.add_scalar('train/reg_tv_app', loss_tv.detach().item(), global_step=iteration)
+        # if TV_weight_app > 0:
+        #     TV_weight_app *= lr_factor
+        #     loss_tv = tensorf.TV_loss_app(tvreg) * TV_weight_app
+        #     total_loss = total_loss + loss_tv
+        #     summary_writer.add_scalar('train/reg_tv_app', loss_tv.detach().item(), global_step=iteration)
 
         optimizer.zero_grad()
         total_loss.backward()

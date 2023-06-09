@@ -1,7 +1,7 @@
 
 dataset_name = reg_sdf
-datadir = ./data/sdf_samples/Cone
-expname =  cone_sdf
+datadir = ./data/sdf_samples/Bunny
+expname =  bunny_sdf
 basedir = ./log
 
 n_iters = 500

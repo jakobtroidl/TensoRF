@@ -67,7 +67,6 @@ def evaluation(test_dataset, tensorf, args, renderer, savePath=None, N_vis=5, pr
         rgb_map = renderer(samples, tensorf, chunk=4096, device=device)
         end = time.time()
 
-        print("Time taken for rendering: ", end - start)
         #
         # rgb_map = rgb_map.clamp(0.0, 1.0)
         #
@@ -78,6 +77,8 @@ def evaluation(test_dataset, tensorf, args, renderer, savePath=None, N_vis=5, pr
             gt_rgb = test_dataset.all_sdf[i:i + batch_size].to(device)
             loss = torch.mean((rgb_map - gt_rgb) ** 2)
             PSNRs.append(-10.0 * np.log(loss.item()) / np.log(10.0))
+
+            print("Time taken for rendering: ", end - start, ". PSNR: ", PSNRs[-1], ". Loss: ", loss.item(), ".")
 
             # if compute_extra_metrics:
             #     ssim = rgb_ssim(rgb_map, gt_rgb, 1)
