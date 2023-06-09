@@ -54,11 +54,14 @@ class RegularSDFDataset(Dataset):
         y_flat = torch.flatten(y)
         z_flat = torch.flatten(z)
 
+        pos = torch.stack([x_flat, y_flat, z_flat], dim=1)
+        sdf = torch.flatten(data)
+
         # concat into 2D tensor
-        self.all_pos = torch.stack([x_flat, y_flat, z_flat], dim=1)
+        self.all_pos = pos.float()
 
         # get the SDF values
-        self.all_sdf = torch.flatten(data)
+        self.all_sdf = sdf.float()
 
     # def define_transforms(self):
     #     self.transform = T.ToTensor()
