@@ -1,13 +1,13 @@
 import torch,os,imageio,sys
 from tqdm.auto import tqdm
 from dataLoader.ray_utils import get_rays
-from models.tensoRF import TensorVM, TensorCP, raw2alpha, TensorVMSplit, AlphaGridMask
+from models.tensoRF import TensorVM, TensorCP, raw2alpha, TensorVMSplit, AlphaGridMask, SDFTensorCP
 from utils import *
 from dataLoader.ray_utils import ndc_rays_blender
 import time
 
 
-def SDFRenderer(positions, tensorf, chunk=4096, is_train=False, device='cuda'):
+def SDFRenderer(positions, tensorf, chunk=4096, N_samples=-1, is_train=False, device='cuda'):
 
     # Debug needed
 
@@ -22,7 +22,7 @@ def SDFRenderer(positions, tensorf, chunk=4096, is_train=False, device='cuda'):
     N_positions_all = positions.shape[0]
     for chunk_idx in range(N_positions_all // chunk + int(N_positions_all % chunk > 0)):
         positions_chunk = positions[chunk_idx * chunk:(chunk_idx + 1) * chunk].to(device)
-        sdf = tensorf(positions_chunk, is_train=is_train)
+        sdf = tensorf(positions_chunk, is_train=is_train, N_samples=-1)
         sdf_values.append(sdf)
     return torch.cat(sdf_values)
 

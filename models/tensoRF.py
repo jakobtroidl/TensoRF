@@ -441,7 +441,7 @@ class TensorCP(TensorBase):
 
 class SDFTensorCP(TensorBase):
     def __init__(self, aabb, gridSize, device, **kargs):
-        super(TensorCP, self).__init__(aabb, gridSize, device, **kargs)
+        super(SDFTensorCP, self).__init__(aabb, gridSize, device, **kargs)
 
     def init_svd_volume(self, res, device):
         self.density_line = self.init_one_svd(self.density_n_comp[0], self.gridSize, 0.2, device)
@@ -459,7 +459,8 @@ class SDFTensorCP(TensorBase):
     def get_optparam_groups(self, lr_init_spatialxyz=0.02, lr_init_network=0.001):
         grad_vars = [{'params': self.density_line, 'lr': lr_init_spatialxyz},
                      # {'params': self.app_line, 'lr': lr_init_spatialxyz},
-                     {'params': self.basis_mat.parameters(), 'lr': lr_init_network}]
+                     # {'params': self.basis_mat.parameters(), 'lr': lr_init_network}
+                     ]
         if isinstance(self.renderModule, torch.nn.Module):
             grad_vars += [{'params': self.renderModule.parameters(), 'lr': lr_init_network}]
         return grad_vars
@@ -485,7 +486,7 @@ class SDFTensorCP(TensorBase):
 
         duration = time.time() - start_time
 
-        # print("compute ", xyz_sampled.shape[0], " density feature time: ", duration)
+        print("compute ", xyz_sampled.shape[0], " density feature time: ", duration)
 
         return sigma_feature
 
@@ -568,6 +569,7 @@ class SDFTensorCP(TensorBase):
         return total
 
     def TV_loss_app(self, reg):
+        print("Nothing to do at TV_loss_app")
         # total = 0
         # for idx in range(len(self.app_line)):
         #     total = total + reg(self.app_line[idx]) * 1e-3

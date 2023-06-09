@@ -16,6 +16,8 @@ class RegularSDFDataset(Dataset):
         self.res = res
         self.all_pos = None
         self.all_sdf = None
+        self.near_far = [0, res]
+        self.white_bg = False
 
         self.scene_bbox = self.get_aabb(res)
         self.read_meta()

@@ -274,6 +274,10 @@ class TensorBase(torch.nn.Module):
         mask_outbbox = ((self.aabb[0] > rays_pts) | (rays_pts > self.aabb[1])).any(dim=-1)
         return rays_pts, interpx, ~mask_outbbox
 
+    def sample_sdf(self, position, is_train=True, N_samples=-1):
+        pass
+
+
     def sample_ray(self, rays_o, rays_d, is_train=True, N_samples=-1):
         N_samples = N_samples if N_samples>0 else self.nSamples
         stepsize = self.stepSize
@@ -406,7 +410,7 @@ class TensorBase(torch.nn.Module):
         return alpha
 
 
-    def forward(self, rays_chunk, white_bg=True, is_train=False, ndc_ray=False, N_samples=-1):
+    def forward(self, rays_chunk, is_sdf=False, white_bg=True, is_train=False, ndc_ray=False, N_samples=-1):
 
         # sample points
         viewdirs = rays_chunk[:, 3:6]
