@@ -405,13 +405,15 @@ class TensorBase(torch.nn.Module):
 
         return alpha
 
-    def forward(self, positions, is_train=True, N_samples=-1):
-        sigma_feature = self.compute_densityfeature(positions)
-        sigma = self.feature2density(sigma_feature)
-        return sigma
+    # def forward(self, samples, white_bg=True, is_train=True, ndc_ray=False, N_samples=-1):
+    #     positions = samples
+    #     sigma_feature = self.compute_densityfeature(positions)
+    #     sigma = self.feature2density(sigma_feature)
+    #     return sigma
 
-    def forward_bak(self, rays_chunk, white_bg=True, is_train=False, ndc_ray=False, N_samples=-1):
+    def forward(self, samples, white_bg=True, is_train=False, ndc_ray=False, N_samples=-1):
 
+        rays_chunk = samples
         # sample points
         viewdirs = rays_chunk[:, 3:6]
         if ndc_ray:

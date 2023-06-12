@@ -4,7 +4,9 @@ datadir = ./data/sdf_samples/Bunny
 expname =  bunny_sdf
 basedir = ./log
 
-n_iters = 500
+res = [256,256,256]
+
+n_iters = 1500
 batch_size = 4096
 
 N_voxel_init = 2097156 # 128**3

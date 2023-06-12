@@ -461,6 +461,12 @@ class SDFTensorCP(TensorBase):
         # self.app_line = self.init_one_svd(self.app_n_comp[0], self.gridSize, 0.2, device)
         # self.basis_mat = torch.nn.Linear(self.app_n_comp[0], self.app_dim, bias=False).to(device)
 
+    def forward(self, samples, white_bg=True, is_train=True, ndc_ray=False, N_samples=-1):
+        positions = samples
+        sigma_feature = self.compute_densityfeature(positions)
+        sigma = self.feature2density(sigma_feature)
+        return sigma
+
     def init_one_svd(self, n_component, gridSize, scale, device):
         line_coef = []
         for i in range(len(self.vecMode)):
@@ -501,7 +507,7 @@ class SDFTensorCP(TensorBase):
 
         duration = time.time() - start_time
 
-        print("compute ", xyz_sampled.shape[0], " density feature time: ", duration)
+        # print("compute ", xyz_sampled.shape[0], " density feature time: ", duration)
 
         return sigma_feature
 

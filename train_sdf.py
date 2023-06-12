@@ -90,6 +90,8 @@ def reconstruction(args):
     near_far = train_dataset.near_far
     ndc_ray = 0
 
+    resolution = [256, 256, 256]
+
     # init resolution
     upsamp_list = args.upsamp_list
     update_AlphaMask_list = args.update_AlphaMask_list
@@ -111,8 +113,8 @@ def reconstruction(args):
     # init parameters
     # tensorVM, renderer = init_parameters(args, train_dataset.scene_bbox.to(device), reso_list[0])
     aabb = train_dataset.scene_bbox.to(device)
-    reso_cur = N_to_reso(args.N_voxel_init, aabb)
-    nSamples = min(args.nSamples, cal_n_samples(reso_cur, args.step_ratio))
+    # reso_cur = N_to_reso(args.N_voxel_init, aabb)
+    # nSamples = min(args.nSamples, cal_n_samples(reso_cur, args.step_ratio))
 
     if args.ckpt is not None:
         ckpt = torch.load(args.ckpt, map_location=device)
@@ -121,7 +123,7 @@ def reconstruction(args):
         tensorf = eval(args.model_name)(**kwargs)
         tensorf.load(ckpt)
     else:
-        tensorf = eval(args.model_name)(aabb, reso_cur, device,
+        tensorf = eval(args.model_name)(aabb, resolution, device,
                                         density_n_comp=n_lamb_sigma, appearance_n_comp=n_lamb_sh,
                                         app_dim=args.data_dim_color, near_far=near_far,
                                         shadingMode=args.shadingMode, alphaMask_thres=args.alpha_mask_thre,
@@ -264,20 +266,20 @@ def reconstruction(args):
                                 N_vis=-1, N_samples=-1, white_bg=white_bg, ndc_ray=ndc_ray, device=device)
         print(f'======> {args.expname} test all psnr: {np.mean(PSNRs_test)} <========================')
 
-    if args.render_test:
-        os.makedirs(f'{logfolder}/imgs_test_all', exist_ok=True)
-        PSNRs_test = evaluation(train_dataset, tensorf, args, renderer, f'{logfolder}/imgs_test_all/',
-                                N_vis=-1, N_samples=-1, white_bg=white_bg, ndc_ray=ndc_ray, device=device)
-        summary_writer.add_scalar('test/psnr_all', np.mean(PSNRs_test), global_step=iteration)
-        print(f'======> {args.expname} test all psnr: {np.mean(PSNRs_test)} <========================')
-
-    if args.render_path:
-        c2ws = train_dataset.render_path
-        # c2ws = test_dataset.poses
-        print('========>', c2ws.shape)
-        os.makedirs(f'{logfolder}/imgs_path_all', exist_ok=True)
-        evaluation_path(train_dataset, tensorf, c2ws, renderer, f'{logfolder}/imgs_path_all/',
-                        N_vis=-1, N_samples=-1, white_bg=white_bg, ndc_ray=ndc_ray, device=device)
+    # if args.render_test:
+    #     os.makedirs(f'{logfolder}/imgs_test_all', exist_ok=True)
+    #     PSNRs_test = evaluation(train_dataset, tensorf, args, renderer, f'{logfolder}/imgs_test_all/',
+    #                             N_vis=-1, N_samples=-1, white_bg=white_bg, ndc_ray=ndc_ray, device=device)
+    #     summary_writer.add_scalar('test/psnr_all', np.mean(PSNRs_test), global_step=iteration)
+    #     print(f'======> {args.expname} test all psnr: {np.mean(PSNRs_test)} <========================')
+    #
+    # if args.render_path:
+    #     c2ws = train_dataset.render_path
+    #     # c2ws = test_dataset.poses
+    #     print('========>', c2ws.shape)
+    #     os.makedirs(f'{logfolder}/imgs_path_all', exist_ok=True)
+    #     evaluation_path(train_dataset, tensorf, c2ws, renderer, f'{logfolder}/imgs_path_all/',
+    #                     N_vis=-1, N_samples=-1, white_bg=white_bg, ndc_ray=ndc_ray, device=device)
 
 
 if __name__ == '__main__':

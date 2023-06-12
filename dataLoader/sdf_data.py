@@ -43,7 +43,7 @@ class RegularSDFDataset(Dataset):
 
         # get size of data as array
         # Create index tensors for each dimension
-        idx = torch.arange(self.res)
+        idx = torch.linspace(-0.5, 0.5, self.res)
 
         # Create 3D meshgrid
         meshgrid = torch.meshgrid(idx, idx, idx)
