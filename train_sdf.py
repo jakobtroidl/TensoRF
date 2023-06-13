@@ -11,7 +11,8 @@ import datetime
 from dataLoader import dataset_dict
 import sys
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu")
 
 renderer = SDFRenderer
 
