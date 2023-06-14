@@ -10,7 +10,7 @@ from .ray_utils import *
 
 
 class RegularSDFDataset(Dataset):
-    def __init__(self, datadir, res=256, downsample=1.0):
+    def __init__(self, datadir, res=[256, 256, 256], downsample=1.0):
 
         self.root_dir = datadir
         self.res = res
@@ -28,11 +28,11 @@ class RegularSDFDataset(Dataset):
 
     @staticmethod
     def get_aabb(res):
-        return torch.tensor([[0, 0, 0], [res, res, res]])
+        return torch.tensor([[0, 0, 0], res])
 
     def read_meta(self):
 
-        path = "{}/{}.pt".format(self.root_dir, self.res)
+        path = "{}/{}_{}_{}.pt".format(self.root_dir, self.res[0], self.res[1], self.res[2])
 
         # load preprocessed data
         if os.path.exists(path):
@@ -43,10 +43,12 @@ class RegularSDFDataset(Dataset):
 
         # get size of data as array
         # Create index tensors for each dimension
-        idx = torch.linspace(-0.5, 0.5, self.res)
+        x_idx = torch.linspace(-0.5, 0.5, self.res[0])
+        y_idx = torch.linspace(-0.5, 0.5, self.res[1])
+        z_idx = torch.linspace(-0.5, 0.5, self.res[2])
 
         # Create 3D meshgrid
-        meshgrid = torch.meshgrid(idx, idx, idx)
+        meshgrid = torch.meshgrid(x_idx, y_idx, z_idx)
 
         x, y, z, = meshgrid
 

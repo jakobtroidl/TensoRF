@@ -4,7 +4,7 @@ datadir = ./data/sdf_samples/Bunny
 expname =  bunny_sdf
 basedir = ./log
 
-res = [256,256,256]
+resolution = [256,256,256]
 
 n_iters = 1500
 batch_size = 4096

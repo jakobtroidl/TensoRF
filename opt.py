@@ -16,7 +16,7 @@ def config_parser(cmd=None):
     parser.add_argument("--progress_refresh_rate", type=int, default=10,
                         help='how many iterations to show psnrs or iters')
 
-    parser.add_argument("--resolution", type=int, default=[256, 256, 256], action="append",
+    parser.add_argument("--resolution", type=int, action="append",
                         help="resolution of the reconstruction volume")
 
     parser.add_argument('--with_depth', action='store_true')
