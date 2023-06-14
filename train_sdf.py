@@ -11,8 +11,8 @@ import datetime
 from dataLoader import dataset_dict
 import sys
 
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
 renderer = SDFRenderer
 
@@ -42,6 +42,30 @@ def export_mesh(args):
 
     alpha, _ = tensorf.getDenseAlpha()
     convert_sdf_samples_to_ply(alpha.cpu(), f'{args.ckpt[:-3]}.ply', bbox=tensorf.aabb.cpu(), level=0.005)
+
+
+@torch.no_grad()
+def render_volume(args): 
+
+    if args.ckpt is None:
+        print('Please specify the path to the trained model')
+        return
+
+    ckpt = torch.load(args.ckpt, map_location=device)
+    kwargs = ckpt['kwargs']
+    kwargs.update({'device': device})
+
+    tensoRF = eval(args.model_name)(**kwargs)
+    tensoRF.load(args.ckpt)
+
+    
+
+
+
+
+
+
+    pass
 
 
 @torch.no_grad()
@@ -85,13 +109,14 @@ def render_test(args):
 def reconstruction(args):
     # init dataset
     dataset = dataset_dict[args.dataset_name]
-    train_dataset = dataset(args.datadir, res=256)
+    resolution = args.resolution
+    train_dataset = dataset(args.datadir, res=resolution)
     # test_dataset = dataset(args.datadir, split='test', downsample=args.downsample_train, is_stack=True)
     white_bg = train_dataset.white_bg
     near_far = train_dataset.near_far
     ndc_ray = 0
 
-    resolution = [256, 256, 256]
+   
 
     # init resolution
     upsamp_list = args.upsamp_list
