@@ -20,6 +20,7 @@ def main():
         print(f"Object name: {name}")
         obj = Object3D(name, scene.vertices, mesh.faces, args.res)
         sdf = obj.sample_sdf(args.out)
+        obj.save_as_images(sdf)
         obj.store(sdf, args.out)
 
 

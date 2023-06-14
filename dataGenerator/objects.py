@@ -2,7 +2,7 @@ import trimesh
 import numpy as np
 import torch
 import os
-
+import torchvision.utils as vutils
 
 import mesh2sdf
 
@@ -41,6 +41,22 @@ class Object3D:
         if as_tensor:
             sdf = torch.from_numpy(sdf)
         return sdf
+    
+    def save_as_images(self, sdf):
+        # Save the SDF as a set of 2D images
+        # @param sdf: the SDF grid as a pytorch tensor
+        # @return: None
+
+        # Create the directory
+        path = 'log/{}/imgs_vis'.format('bunny_sdf')
+        if not os.path.exists(path):
+            os.makedirs(path)
+        
+        # Save the images
+        for i in range(self.res):
+            img = sdf[:, :, i]
+            vutils.save_image(img, path + "/" + f'{i}.png', normalize=True)
+
 
     def store(self, sdf, path, as_tensor=True):
         parent = "{}/{}".format(path, self.name)

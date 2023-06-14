@@ -55,6 +55,8 @@ def render_volume(args):
     
     renderer = SDFRenderer
 
+    path = 'log/{}/imgs_rgba'.format(args.expname)
+
     ckpt = torch.load(args.ckpt, map_location=device)
     kwargs = ckpt['kwargs']
     kwargs.update({'device': device})
@@ -62,31 +64,26 @@ def render_volume(args):
     tensoRF = eval(args.model_name)(**kwargs)
     tensoRF.load(args.ckpt)
 
-    # for i in range(0, args.resolution[2]):
-    #     print(f'Processing slice {i}')
+    for i in np.arange(-0.5, 0.5, 0.05):
+        print(f'Processing slice {i}')
         
-    # Create index tensors for each dimension
-    x_idx = torch.linspace(-0.5, 0.5, args.resolution[0])
-    y_idx = torch.linspace(-0.5, 0.5, args.resolution[1])
-    
+        # Create index tensors for each dimension
+        x_idx = torch.linspace(-0.5, 0.5, args.resolution[0])
+        y_idx = torch.linspace(-0.5, 0.5, args.resolution[1])
+        
 
-    meshgrid = torch.meshgrid(x_idx, y_idx)
+        meshgrid = torch.meshgrid(x_idx, y_idx)
+        x, y = meshgrid
 
-    x, y = meshgrid
+        x_flat = torch.flatten(x)
+        y_flat = torch.flatten(y)
+        z_flat = torch.linspace(i, i, args.resolution[2]**2)
 
-    x_flat = torch.flatten(x)
-    y_flat = torch.flatten(y)
-    z_flat = torch.linspace(0, 0, args.resolution[2]**2)
+        samples = torch.stack([x_flat, y_flat, z_flat], dim=1)
+        sdf_values = renderer(samples, tensoRF, chunk=4096, device=device)
+        sdf_image = torch.reshape(sdf_values, (args.resolution[0], args.resolution[1]))
 
-    samples = torch.stack([x_flat, y_flat, z_flat], dim=1)
-
-    sdf_values = renderer(samples, tensoRF, chunk=4096, device=device)
-
-    sdf_image = torch.reshape(sdf_values, (args.resolution[0], args.resolution[1]))
-
-    vutils.save_image(sdf_image, 'tensor_image.png')
-
-    return sdf_image
+        vutils.save_image(sdf_image, path + "/" + f'{i}.png', normalize=True)
 
 
 @torch.no_grad()
