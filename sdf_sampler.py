@@ -8,7 +8,7 @@ from params import Params
 def main():
     parser = argparse.ArgumentParser(description='3D Object SDF Sampling Tool')
     parser.add_argument('--path', type=str, help='Path to the .obj file')
-    parser.add_argument('--res', type=int, default=256, help='Number of SDF samples per object')
+    parser.add_argument('--res', type=int, default=256, help='x, y, z resolution of the SDF grid')
     parser.add_argument('--out', type=str, default=Params.SDF_DIR, help='Output directory')
     args = parser.parse_args()
 

@@ -48,9 +48,9 @@ class Object3D:
             # Create the directory
              os.makedirs(parent)
         if as_tensor:
-            path = "{}/{}.pt".format(parent, self.res)
+            path = "{}/{}_{}_{}.pt".format(parent, self.res, self.res, self.res)
             torch.save(sdf, path)
         else:
-            path = "{}/{}.npy".format(parent, self.res)
+            path = "{}/{}_{}_{}.npy".format(parent, self.res, self.res, self.res)
             with open(path, 'wb') as file:
                 np.save(file, sdf)
