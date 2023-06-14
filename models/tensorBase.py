@@ -243,7 +243,8 @@ class TensorBase(torch.nn.Module):
             'pos_pe': self.pos_pe,
             'view_pe': self.view_pe,
             'fea_pe': self.fea_pe,
-            'featureC': self.featureC
+            'featureC': self.featureC, 
+            'device': self.device,
         }
 
     def save(self, path):
@@ -257,13 +258,17 @@ class TensorBase(torch.nn.Module):
         torch.save(ckpt, path)
 
     def load(self, ckpt):
-        if 'alphaMask.aabb' in ckpt.keys():
+        model = torch.load(ckpt, map_location=self.device)
+        kwargs = model['kwargs']
+        self.__init__(**kwargs)
+        self.load_state_dict(model['state_dict'])
+        
+        if 'alphaMask.aabb' in model.keys():
             length = np.prod(ckpt['alphaMask.shape'])
             alpha_volume = torch.from_numpy(
                 np.unpackbits(ckpt['alphaMask.mask'])[:length].reshape(ckpt['alphaMask.shape']))
             self.alphaMask = AlphaGridMask(self.device, ckpt['alphaMask.aabb'].to(self.device),
                                            alpha_volume.float().to(self.device))
-        self.load_state_dict(ckpt['state_dict'])
 
     def sample_ray_ndc(self, rays_o, rays_d, is_train=True, N_samples=-1):
         N_samples = N_samples if N_samples > 0 else self.nSamples
