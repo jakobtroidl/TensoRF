@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Python: Current File",
             "type": "python",
@@ -12,7 +11,11 @@
             "program": "${workspaceFolder}/train_sdf.py",
             "console": "integratedTerminal",
             "justMyCode": true, 
-            "args": ["--config", "configs/bunny_sdf.txt"]
+            "args": [
+                        "--config",         "configs/bunny_sdf.txt",
+                        "--render_only",    "1", 
+                        "--ckpt",           "log/bunny_sdf/bunny_sdf.th",
+                    ]
         }
     ]
 }
