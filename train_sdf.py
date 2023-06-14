@@ -6,6 +6,8 @@ import json, random
 from renderer import *
 from utils import *
 from torch.utils.tensorboard import SummaryWriter
+import torchvision.utils as vutils
+
 import datetime
 
 from dataLoader import dataset_dict
@@ -50,6 +52,8 @@ def render_volume(args):
     if args.ckpt is None:
         print('Please specify the path to the trained model')
         return
+    
+    renderer = SDFRenderer
 
     ckpt = torch.load(args.ckpt, map_location=device)
     kwargs = ckpt['kwargs']
@@ -58,14 +62,31 @@ def render_volume(args):
     tensoRF = eval(args.model_name)(**kwargs)
     tensoRF.load(args.ckpt)
 
+    # for i in range(0, args.resolution[2]):
+    #     print(f'Processing slice {i}')
+        
+    # Create index tensors for each dimension
+    x_idx = torch.linspace(-0.5, 0.5, args.resolution[0])
+    y_idx = torch.linspace(-0.5, 0.5, args.resolution[1])
     
 
+    meshgrid = torch.meshgrid(x_idx, y_idx)
 
+    x, y = meshgrid
 
+    x_flat = torch.flatten(x)
+    y_flat = torch.flatten(y)
+    z_flat = torch.linspace(0, 0, args.resolution[2]**2)
 
+    samples = torch.stack([x_flat, y_flat, z_flat], dim=1)
 
+    sdf_values = renderer(samples, tensoRF, chunk=4096, device=device)
 
-    pass
+    sdf_image = torch.reshape(sdf_values, (args.resolution[0], args.resolution[1]))
+
+    vutils.save_image(sdf_image, 'tensor_image.png')
+
+    return sdf_image
 
 
 @torch.no_grad()
@@ -142,14 +163,14 @@ def reconstruction(args):
     # reso_cur = N_to_reso(args.N_voxel_init, aabb)
     # nSamples = min(args.nSamples, cal_n_samples(reso_cur, args.step_ratio))
 
-    if args.ckpt is not None:
-        ckpt = torch.load(args.ckpt, map_location=device)
-        kwargs = ckpt['kwargs']
-        kwargs.update({'device': device})
-        tensorf = eval(args.model_name)(**kwargs)
-        tensorf.load(ckpt)
-    else:
-        tensorf = eval(args.model_name)(aabb, resolution, device,
+    # if args.ckpt is not None:
+    #     ckpt = torch.load(args.ckpt, map_location=device)
+    #     kwargs = ckpt['kwargs']
+    #     kwargs.update({'device': device})
+    #     tensorf = eval(args.model_name)(**kwargs)
+    #     tensorf.load(ckpt)
+    # else:
+    tensorf = eval(args.model_name)(aabb, resolution, device,
                                         density_n_comp=n_lamb_sigma, appearance_n_comp=n_lamb_sh,
                                         app_dim=args.data_dim_color, near_far=near_far,
                                         shadingMode=args.shadingMode, alphaMask_thres=args.alpha_mask_thre,
@@ -320,7 +341,7 @@ if __name__ == '__main__':
     if args.export_mesh:
         export_mesh(args)
 
-    if args.render_only and (args.render_test or args.render_path):
-        render_test(args)
+    if args.render_only and args.ckpt:
+        render_volume(args)
     else:
         reconstruction(args)
