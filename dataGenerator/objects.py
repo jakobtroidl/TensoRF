@@ -12,32 +12,27 @@ class Object3D:
         self.mesh = self.mesh = trimesh.Trimesh(vertices, faces)
         self.name = name
         self.res = resolution
+        self.level = 2 / self.res
+        self.mesh_scale = 0.8
+        self.normalize()
 
     def __repr__(self):
         return f'Object3D(vertices={len(self.mesh.vertices)}, faces={len(self.mesh.faces)})'
 
     def normalize(self):
-        # normalizes the object so that the coordinates
-        # of all vertices are in the range [-1, 1]
-
-        # Compute the centroid of the mesh
-        centroid = self.mesh.centroid
-
-        # Translate the mesh so that the centroid is at the origin
-        self.mesh.vertices -= centroid
-
-        # Compute the maximum absolute coordinate value
-        max_abs_coord = np.max(np.abs(self.mesh.vertices))
-
-        # Scale the mesh so that the coordinates of all vertices are in the range [-1, 1]
-        self.mesh.vertices /= max_abs_coord
+        vertices = self.mesh.vertices
+        bbmin = vertices.min(0)
+        bbmax = vertices.max(0)
+        center = (bbmin + bbmax) * 0.5
+        scale = 2.0 * self.mesh_scale / (bbmax - bbmin).max()
+        self.mesh.vertices = (vertices - center) * scale
 
     def sample_sdf(self, as_tensor=True):
         # Compute the signed distance field of the mesh
         # @param size: the size of the SDF grid, result will be a size x size x size np array or tensor
         # @param as_tensor: whether to return the SDF as a numpy array or as a pytorch tensor
         # @return: the SDF grid as a pytorch tensor
-        sdf = mesh2sdf.compute(self.mesh.vertices, self.mesh.faces, self.res)
+        sdf = mesh2sdf.compute(self.mesh.vertices, self.mesh.faces, self.res, fix=True, level=self.level, return_mesh=False)
         if as_tensor:
             sdf = torch.from_numpy(sdf)
         return sdf

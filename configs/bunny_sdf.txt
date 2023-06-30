@@ -1,6 +1,6 @@
 
 dataset_name = reg_sdf
-datadir = ./data/sdf_samples/Bunny
+datadir = ./data/sdf_samples/stanford-bunny
 expname =  bunny_sdf
 basedir = ./log
 
