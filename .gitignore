@@ -11,3 +11,6 @@ log/
 *.pyc
 
 *.0
+
+client/node_modules/
+client/dist/
