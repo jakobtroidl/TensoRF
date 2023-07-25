@@ -6,7 +6,7 @@ basedir = ./log
 
 resolution = [256,256,256]
 
-n_iters = 1500
+n_iters = 9000
 batch_size = 4096
 
 N_voxel_init = 2097156 # 128**3
@@ -36,8 +36,8 @@ rm_weight_mask_thre = 1e-4
 
 ## please uncomment following configuration if hope to training on cp model
 model_name = SDFTensorCP
-n_lamb_sigma = [96]
-n_lamb_sh = [288]
+n_lamb_sigma = [384]
+n_lamb_sh = [96]
 N_voxel_final = 125000000 # 500**3
 L1_weight_inital = 1e-5
 L1_weight_rest = 1e-5

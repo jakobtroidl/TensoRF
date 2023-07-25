@@ -542,7 +542,7 @@ class SDFTensorCP(TensorBase):
 
     @torch.no_grad()
     def upsample_volume_grid(self, res_target):
-        self.density_line, self.app_line = self.up_sampling_Vector(self.density_line, res_target)
+        self.density_line = self.up_sampling_Vector(self.density_line, res_target)
 
         self.update_stepSize(res_target)
         print(f'upsamping to {res_target}')
