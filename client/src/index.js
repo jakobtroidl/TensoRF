@@ -45,7 +45,7 @@ const reader = vtkHttpDataSetReader.newInstance({ fetchGzip: true });
 marchingCube.setInputConnection(reader.getOutputPort());
 
 reader
-  .setUrl(`/client/src/headsq.vti`, { loadData: true})
+  .setUrl(`https://raw.githubusercontent.com/jakobtroidl/neuralObjects/main/client/src/headsq.vti/`, { loadData: true})
   .then(() => {
     const data = reader.getOutputData();
     const dataRange = data.getPointData().getScalars().getRange();
