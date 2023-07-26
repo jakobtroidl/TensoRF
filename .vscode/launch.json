@@ -13,7 +13,7 @@
             "justMyCode": true, 
             "args": [
                         "--config",         "configs/bunny_sdf.txt",
-                        "--render_only",    "1", 
+                        "--render_only",    "0", 
                         "--ckpt",           "log/bunny_sdf/bunny_sdf.th",
                     ]
         }
