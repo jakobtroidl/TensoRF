@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Python: Train SDF",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/train_sdf.py",
@@ -15,6 +15,18 @@
                         "--config",         "configs/bunny_sdf.txt",
                         "--render_only",    "0", 
                         "--ckpt",           "log/bunny_sdf/bunny_sdf.th",
+                    ]
+        }, 
+        {
+            "name": "Python: Sample SDF",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/sdf_sampler.py",
+            "console": "integratedTerminal",
+            "justMyCode": true, 
+            "python": "/home/jakobtroidl/anaconda3/envs/nlabels/bin/python",
+            "args": [
+                        "--path",         "/home/jakobtroidl/Desktop/neuralObjects/data/models/stanford-bunny.obj"
                     ]
         }
     ]
