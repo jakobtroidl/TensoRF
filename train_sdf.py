@@ -45,6 +45,52 @@ def export_mesh(args):
     alpha, _ = tensorf.getDenseAlpha()
     convert_sdf_samples_to_ply(alpha.cpu(), f'{args.ckpt[:-3]}.ply', bbox=tensorf.aabb.cpu(), level=0.005)
 
+@torch.no_grad()
+def as_numpy(args):
+    if args.ckpt is None:
+        print('Please specify the path to the trained model')
+        return
+    
+    renderer = SDFRenderer
+
+    path = 'log/{}/volume.npy'.format(args.expname)
+
+    ckpt = torch.load(args.ckpt, map_location=device)
+    kwargs = ckpt['kwargs']
+    kwargs.update({'device': device})
+
+    tensoRF = eval(args.model_name)(**kwargs)
+    tensoRF.load(args.ckpt)
+
+    volume = torch.zeros(args.resolution[0], args.resolution[1], args.resolution[2])
+
+    for i in range(args.resolution[2]):
+        print(f'Processing slice {i}')
+        
+        # Create index tensors for each dimension
+        x_idx = torch.linspace(-0.5, 0.5, args.resolution[0])
+        y_idx = torch.linspace(-0.5, 0.5, args.resolution[1])
+        
+
+        meshgrid = torch.meshgrid(x_idx, y_idx)
+        x, y = meshgrid
+
+        x_flat = torch.flatten(x)
+        y_flat = torch.flatten(y)
+        z_flat = torch.linspace(i, i, args.resolution[2]**2)
+
+        samples = torch.stack([x_flat, y_flat, z_flat], dim=1)
+        sdf_values = renderer(samples, tensoRF, chunk=4096, device=device)
+        sdf_image = torch.reshape(sdf_values, (args.resolution[0], args.resolution[1]))
+
+        volume[:, :, i] = sdf_image
+
+    # Convert the tensor to a NumPy array
+    array = volume.numpy()
+
+    # Save the array to disk
+    np.save(path, array)
+
 
 @torch.no_grad()
 def render_volume(args): 
@@ -265,11 +311,11 @@ def reconstruction(args):
             )
             PSNRs = []
 
-        if iteration % args.vis_every == args.vis_every - 1 and args.N_vis != 0:
-            PSNRs_test = evaluation(train_dataset, tensorf, args, renderer, f'{logfolder}/imgs_vis/', N_vis=args.N_vis,
-                                    prtx=f'{iteration:06d}_', N_samples=nSamples, white_bg=False, ndc_ray=False,
-                                    compute_extra_metrics=False)
-            summary_writer.add_scalar('test/psnr', np.mean(PSNRs_test), global_step=iteration)
+        # if iteration % args.vis_every == args.vis_every - 1 and args.N_vis != 0:
+        #     PSNRs_test = evaluation(train_dataset, tensorf, args, renderer, f'{logfolder}/imgs_vis/', N_vis=args.N_vis,
+        #                             prtx=f'{iteration:06d}_', N_samples=nSamples, white_bg=False, ndc_ray=False,
+        #                             compute_extra_metrics=False)
+        #     summary_writer.add_scalar('test/psnr', np.mean(PSNRs_test), global_step=iteration)
 
         # if iteration in update_AlphaMask_list:
 
@@ -342,3 +388,4 @@ if __name__ == '__main__':
         render_volume(args)
     else:
         reconstruction(args)
+        as_numpy(args)
