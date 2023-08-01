@@ -65,6 +65,10 @@ class RegularSDFDataset(Dataset):
         # get the SDF values
         self.all_sdf = sdf.float()
 
+        print("Max {}".format(torch.max(self.all_sdf)))
+        print("Min {}".format(torch.min(self.all_sdf)))    
+              
+
     # def define_transforms(self):
     #     self.transform = T.ToTensor()
     #
