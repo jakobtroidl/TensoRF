@@ -66,15 +66,17 @@ class Object3D:
             vutils.save_image(img, path + "/" + f'{i}.png', normalize=True)
 
 
-    def store(self, sdf, path, as_tensor=False):
+    def store(self, sdf, path):
         parent = "{}/{}".format(path, self.name)
         if not os.path.exists(parent):
             # Create the directory
              os.makedirs(parent)
-        if as_tensor:
-            path = "{}/{}_{}_{}.pt".format(parent, self.res, self.res, self.res)
-            torch.save(sdf, path)
-        else:
-            path = "{}/{}_{}_{}.npy".format(parent, self.res, self.res, self.res)
-            with open(path, 'wb') as file:
-                np.save(file, sdf)
+    
+        # Save SDF samples as a PyTorch Tensor
+        path = "{}/{}_{}_{}.pt".format(parent, self.res, self.res, self.res)
+        torch.save(sdf, path)
+        
+        # Save SDF samples as Numpy array
+        path = "{}/{}_{}_{}.npy".format(parent, self.res, self.res, self.res)
+        with open(path, 'wb') as file:
+            np.save(file, sdf)
