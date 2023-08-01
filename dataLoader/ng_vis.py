@@ -8,7 +8,7 @@ import neuroglancer.cli
 
 
 def add_example_layers(state):
-    a = np.load("/home/jakobtroidl/Desktop/neuralObjects/log/bunny_sdf/volume.npy")
+    a = np.load("/home/jakobtroidl/Desktop/neuralObjects/log/armadillo_sdf/volume.npy")
     b = a < 0.0
     b = b.astype(np.uint8) * 255
 
