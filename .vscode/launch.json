@@ -12,9 +12,9 @@
             "console": "integratedTerminal",
             "justMyCode": true, 
             "args": [
-                        "--config",         "configs/bunny_sdf.txt",
+                        "--config",         "configs/armadillo_sdf.txt",
                         "--render_only",    "0", 
-                        "--ckpt",           "log/bunny_sdf/bunny_sdf.th",
+                        "--ckpt",           "log/armadillo_sdf/armadillo_sdf.th",
                     ]
         }, 
         {
@@ -26,7 +26,7 @@
             "justMyCode": true, 
             "python": "/home/jakobtroidl/anaconda3/envs/nlabels/bin/python",
             "args": [
-                        "--path",         "/home/jakobtroidl/Desktop/neuralObjects/data/models/stanford-bunny.obj"
+                        "--path",         "/home/jakobtroidl/Desktop/neuralObjects/data/models/armadillo.obj"
                     ]
         }
     ]
