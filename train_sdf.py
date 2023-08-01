@@ -64,7 +64,8 @@ def as_numpy(args):
 
     volume = torch.zeros(args.resolution[0], args.resolution[1], args.resolution[2])
 
-    for i in range(args.resolution[2]):
+    j = 0
+    for i in np.linspace(-0.5, 0.5, args.resolution[2] - 1):
         print(f'Processing slice {i}')
         
         # Create index tensors for each dimension
@@ -83,10 +84,15 @@ def as_numpy(args):
         sdf_values = renderer(samples, tensoRF, chunk=4096, device=device)
         sdf_image = torch.reshape(sdf_values, (args.resolution[0], args.resolution[1]))
 
-        volume[:, :, i] = sdf_image
+        volume[:, :, j] = sdf_image
+        j += 1
 
     # Convert the tensor to a NumPy array
     array = volume.numpy()
+
+    print("------Save Reconstructed SDF as np -------")
+    print("Min SDF value is {}".format(np.min(array)))
+    print("Max SDF value is {}".format(np.max(array)))
 
     # Save the array to disk
     np.save(path, array)
